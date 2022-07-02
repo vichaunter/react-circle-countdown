@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useRef } from "react";
+import React, { FC, ReactNode, useEffect, useRef } from "react";
 import styled from "styled-components";
 import useCountdown from "../hooks/useCountdown";
 
@@ -63,8 +63,8 @@ const Counter = ({
   onFinish?: (n: number) => void;
 }) => {
   const { countLeft } = useCountdown({ seconds, onFinish });
-  console.log("Counter", countLeft);
-  return <>{countLeft}</>;
+
+  return <span className="counter">{countLeft}</span>;
 };
 
 type Props = {
@@ -72,6 +72,8 @@ type Props = {
   diameter?: number;
   strokeWidth?: number;
   onFinish?: (n: number) => void;
+  counter?: boolean;
+  children: ReactNode;
 };
 
 const CircleCountdownSvg: FC<Props> = ({
@@ -79,6 +81,8 @@ const CircleCountdownSvg: FC<Props> = ({
   diameter = 200,
   strokeWidth = 8,
   onFinish,
+  counter,
+  children,
 }) => {
   const svgWrapperRef = useRef<HTMLDivElement>(null);
   const svg = getSvg({ diameter, unit: "px", strokeWidth });
@@ -93,6 +97,7 @@ const CircleCountdownSvg: FC<Props> = ({
 
   return (
     <StyledCircleCountdownSvg
+      className="countdown-svg"
       dashArray={circumference - strokeWidth * 3}
       style={{
         width: 200,
@@ -100,7 +105,8 @@ const CircleCountdownSvg: FC<Props> = ({
       }}
       ref={svgWrapperRef}
     >
-      <Counter seconds={seconds} onFinish={onFinish} />
+      {counter && <Counter seconds={seconds} onFinish={onFinish} />}
+      {children}
     </StyledCircleCountdownSvg>
   );
 };

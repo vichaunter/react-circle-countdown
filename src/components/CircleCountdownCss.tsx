@@ -106,7 +106,6 @@ const CircleCountdownCss: FC<Props> = ({
   const [left, setLeft] = useState(false);
 
   const handleOnFinish = useCallback(() => {
-    console.log("finished");
     onFinish && onFinish();
   }, [onFinish]);
 
