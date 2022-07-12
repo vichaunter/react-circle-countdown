@@ -22,7 +22,9 @@ const getSvg = ({
     diameter + strokeWidth
   }" xml:space="preserve">
   
-  <circle class="circle" cx="${diameter / 2 + strokeWidth / 2}" cy="100" r="${
+  <circle class="circle" cx="${diameter / 2 + strokeWidth / 2}" cy="${
+    diameter / 2
+  }" r="${
     diameter / 2 - strokeWidth / 2
   }" fill="transparent" stroke="${fill}" stroke-width="${strokeWidth}" />
 </svg>`;
@@ -38,13 +40,15 @@ const StyledCircleCountdownSvg = styled.div<StyleProps>`
   justify-content: center;
   align-items: center;
   position: relative;
-
+  width: 100%;
+  height: 100%;
+  
   svg {
     position: absolute;
     stroke-dasharray: ${({ dashArray }) => dashArray};
     stroke-dashoffset: ${({ dashArray }) => dashArray};
     stroke-linecap: round;
-    animation: dash 5000ms linear forwards;
+    animation: dash ${({ seconds }) => seconds}s linear forwards;
     transform: rotate(-90deg);
   }
 
@@ -58,14 +62,16 @@ const StyledCircleCountdownSvg = styled.div<StyleProps>`
 const Counter = ({
   seconds,
   onFinish,
+  visible,
 }: {
-  seconds: number;
-  onFinish?: (n: number) => void;
+  seconds: number
+  onFinish?: (n: number) => void
+  visible?: boolean
 }) => {
-  const { countLeft } = useCountdown({ seconds, onFinish });
+  const { countLeft } = useCountdown({ seconds, onFinish })
 
-  return <span className="counter">{countLeft}</span>;
-};
+  return visible ? <span className="counter">{countLeft}</span> : null
+}
 
 type Props = {
   seconds?: number;
@@ -73,7 +79,7 @@ type Props = {
   strokeWidth?: number;
   onFinish?: (n: number) => void;
   counter?: boolean;
-  children: ReactNode;
+  children?: ReactNode;
 };
 
 const CircleCountdownSvg: FC<Props> = ({
@@ -99,13 +105,10 @@ const CircleCountdownSvg: FC<Props> = ({
     <StyledCircleCountdownSvg
       className="countdown-svg"
       dashArray={circumference - strokeWidth * 3}
-      style={{
-        width: 200,
-        height: 200,
-      }}
+      seconds={seconds}
       ref={svgWrapperRef}
     >
-      {counter && <Counter seconds={seconds} onFinish={onFinish} />}
+      <Counter seconds={seconds} onFinish={onFinish} visible={counter} />
       {children}
     </StyledCircleCountdownSvg>
   );
